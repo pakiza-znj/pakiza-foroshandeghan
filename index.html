@@ -4,247 +4,307 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>پاکیزا فروشندگان</title>
+<title>پنل مدیریت پاکیزا</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 *{box-sizing:border-box}
-body{margin:0;background:#f4f7f4;color:#24372c;font-family:Tahoma,Arial,sans-serif}
-header{background:#176b48;color:white;padding:24px 18px}
-header h1{margin:0 0 8px;font-size:24px}
-header p{margin:0;font-size:13px}
-main{max-width:1000px;margin:auto;padding:18px}
-.card{background:white;padding:18px;border-radius:16px;margin-bottom:18px;box-shadow:0 3px 15px #173c2010}
-h2{font-size:18px;margin:0 0 16px}
-.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
-label{display:block;font-size:13px;margin-bottom:6px}
-input{width:100%;padding:12px;border:1px solid #d9e3dc;border-radius:9px;font:inherit;min-width:0}
-button{border:0;border-radius:9px;padding:12px 15px;font:inherit;cursor:pointer}
-.primary{background:#176b48;color:white;width:100%;margin-top:14px}
-.secondary{background:#e5f2e9;color:#176b48}
-.danger{background:#ffeded;color:#a42626}
-.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-bottom:18px}
-.stat{background:#e4f2e8;border-radius:12px;padding:13px}
-.stat small{display:block;font-size:12px;margin-bottom:8px}
-.stat strong{font-size:16px;overflow-wrap:anywhere}
-.product{border:1px solid #e2e9e3;padding:14px;border-radius:12px;margin-top:12px}
-.product h3{margin:0 0 10px;font-size:16px}
-.details{font-size:13px;line-height:2;color:#4c6254}
-.actions{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+body{margin:0;background:#f7f5f2;color:#292724;font-family:Tahoma,Arial,sans-serif}
+header{background:#fff;padding:22px 16px;text-align:center;border-bottom:1px solid #eee}
+header h1{margin:0;color:#52745c;font-size:25px}
+header p{color:#777;font-size:13px}
+main{max-width:850px;margin:22px auto;padding:0 14px}
+.card{background:white;padding:18px;border-radius:16px;margin-bottom:16px;box-shadow:0 3px 14px #00000008}
+h2{font-size:18px;margin-top:0}
+input,button{font:inherit;border-radius:10px;padding:12px;width:100%;margin:6px 0}
+input{border:1px solid #ddd;background:#fff}
+button{border:0;background:#52745c;color:white;cursor:pointer}
+button:disabled{opacity:.5}
+.secondary{background:#ecebe7;color:#333}
+.danger{background:#a94343;color:white}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.stat{background:#f5f5f1;padding:12px;border-radius:12px;text-align:center}
+.stat strong{display:block;font-size:20px;color:#52745c;margin-top:8px}
+.small{font-size:12px;color:#777;line-height:1.9}
+.product{border:1px solid #eee;border-radius:12px;padding:13px;margin-top:10px}
+.product img{width:72px;height:72px;object-fit:contain;float:left}
+.product h3{margin:5px 0 10px;font-size:16px}
+.actions{display:flex;gap:8px;clear:both;padding-top:8px}
 .actions button{flex:1}
-.note{font-size:12px;line-height:2;color:#765b23;background:#fff5d9;padding:12px;border-radius:10px}
-.empty{color:#7a887e;text-align:center;padding:20px}
-@media(min-width:650px){.grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+#message{padding:10px;border-radius:9px;display:none;margin-bottom:12px;line-height:1.8}
+@media(max-width:420px){.grid{grid-template-columns:1fr}.stats{font-size:12px}.stat strong{font-size:16px}}
 </style>
 </head>
 <body>
 <header>
-  <h1>🌿 پاکیزا فروشندگان</h1>
-  <p>مدیریت محصولات، قیمت‌ها و موجودی فروشگاه</p>
+<h1>پاکیزا شاپ</h1>
+<p>پنل مدیریت فروشنده</p>
 </header>
 
 <main>
-  <div class="stats">
-    <div class="stat"><small>تعداد محصولات</small><strong id="count">۰</strong></div>
-    <div class="stat"><small>ارزش موجودی بر اساس خرید</small><strong id="stockValue">۰</strong></div>
-    <div class="stat"><small>سود احتمالی موجودی</small><strong id="potentialProfit">۰</strong></div>
-  </div>
+<div id="message" role="status"></div>
 
-  <section class="card">
-    <h2 id="formTitle">➕ افزودن محصول جدید</h2>
-    <form id="productForm">
-      <input type="hidden" id="editId">
-      <div class="grid">
-        <div>
-          <label for="name">نام محصول *</label>
-          <input id="name" required placeholder="مثلاً اسپری پاک‌کننده">
-        </div>
-        <div>
-          <label for="buy">قیمت خرید (تومان) *</label>
-          <input id="buy" type="number" min="0" required placeholder="۱۰۰۰۰۰">
-        </div>
-        <div>
-          <label for="sell">قیمت فروش (تومان) *</label>
-          <input id="sell" type="number" min="0" required placeholder="۱۵۰۰۰۰">
-        </div>
-        <div>
-          <label for="stock">تعداد موجودی *</label>
-          <input id="stock" type="number" min="0" step="1" required placeholder="۱۰">
-        </div>
-        <div>
-          <label for="image">لینک عکس محصول (اختیاری)</label>
-          <input id="image" type="url" placeholder="https://...">
-        </div>
-      </div>
-      <button class="primary" type="submit" id="saveButton">ثبت محصول</button>
-      <button class="secondary" type="button" id="cancelEdit" hidden>لغو ویرایش</button>
-    </form>
-  </section>
+<section class="card" id="loginCard">
+<h2>ورود فروشنده</h2>
+<p class="small">با ایمیل و رمز حسابی که قبلاً در Supabase ساخته‌ای وارد شو.</p>
+<form id="loginForm">
+<input id="email" type="email" placeholder="ایمیل" autocomplete="username" required>
+<input id="password" type="password" placeholder="رمز عبور" autocomplete="current-password" required>
+<button id="loginButton" type="submit">ورود به پنل</button>
+</form>
+</section>
 
-  <section class="card">
-    <h2>📦 محصولات ثبت‌شده</h2>
-    <div id="products"><p class="empty">هنوز محصولی ثبت نشده است.</p></div>
-  </section>
+<div id="dashboard" hidden>
+<section class="card">
+<div style="display:flex;align-items:center;justify-content:space-between;gap:10px">
+<h2>مدیریت محصولات</h2>
+<button id="logoutButton" class="secondary" style="width:auto">خروج</button>
+</div>
+<div class="stats">
+<div class="stat">تعداد محصولات<strong id="totalCount">۰</strong></div>
+<div class="stat">موجودی کل<strong id="totalStock">۰</strong></div>
+<div class="stat">ارزش خرید موجودی<strong id="totalValue">۰</strong></div>
+</div>
+</section>
 
-  <section class="card">
-    <h2>💾 پشتیبان اطلاعات</h2>
-    <p class="details">برای نگهداری یک نسخه از اطلاعات ثبت‌شده، می‌توانی از آن خروجی بگیری.</p>
-    <button class="secondary" id="exportButton">دریافت فایل پشتیبان</button>
-  </section>
+<section class="card">
+<h2 id="formTitle">افزودن محصول جدید</h2>
+<form id="productForm">
+<input id="productName" placeholder="نام محصول" required maxlength="150">
+<div class="grid">
+<input id="purchasePrice" type="number" min="0" step="any" placeholder="قیمت خرید (تومان)" required>
+<input id="salePrice" type="number" min="0" step="any" placeholder="قیمت فروش (تومان)" required>
+</div>
+<input id="stock" type="number" min="0" step="1" placeholder="تعداد موجودی" required>
+<input id="imageUrl" type="url" placeholder="لینک عکس محصول (اختیاری)">
+<button id="saveButton" type="submit">ذخیره محصول</button>
+<button id="cancelButton" type="button" class="secondary" hidden>لغو ویرایش</button>
+</form>
+<p class="small">قیمت‌ها را به تومان وارد کن. محصولات در دیتابیس ذخیره می‌شوند.</p>
+</section>
 
-  <p class="note">نسخهٔ اولیه: اطلاعات فقط در حافظهٔ همین مرورگر ذخیره می‌شوند. این پنل هنوز به سایت مشتری‌ها وصل نیست و ورود امن فروشنده ندارد. فعلاً اطلاعات واقعی یا محرمانه وارد نکن.</p>
+<section class="card">
+<h2>محصولات ثبت‌شده</h2>
+<input id="search" placeholder="جست‌وجوی نام محصول">
+<div id="productsList"></div>
+</section>
+</div>
 </main>
 
 <script>
-const $ = id => document.getElementById(id);
-const storageKey = "pakiza_seller_products_v1";
+const SUPABASE_URL = "https://ctwtxdkigempvenfhuhz.supabase.co/rest/v1/";
+const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_D-zDQpKXDR7Qz2k7itqQaQ_eGCEdOT1";
+
+const messageBox = document.getElementById("message");
+const loginCard = document.getElementById("loginCard");
+const dashboard = document.getElementById("dashboard");
+const productForm = document.getElementById("productForm");
+const productsList = document.getElementById("productsList");
+
+let db;
 let products = [];
+let editingId = null;
+let busy = false;
 
-try {
-  products = JSON.parse(localStorage.getItem(storageKey) || "[]");
-  if (!Array.isArray(products)) products = [];
-} catch {
-  products = [];
+function showMessage(text, error=false) {
+  messageBox.textContent = text;
+  messageBox.style.display = "block";
+  messageBox.style.background = error ? "#fff0ef" : "#edf6ed";
+  messageBox.style.color = error ? "#9a2929" : "#315c39";
 }
-
-const money = n => new Intl.NumberFormat("fa-IR").format(n) + " تومان";
-const digits = n => new Intl.NumberFormat("fa-IR").format(n);
-
-function persist() {
-  localStorage.setItem(storageKey, JSON.stringify(products));
-  render();
+function hideMessage() {
+  messageBox.style.display = "none";
 }
-
-function render() {
-  $("count").textContent = digits(products.length);
-  $("stockValue").textContent = money(products.reduce((s,p) => s + p.buy*p.stock, 0));
-  $("potentialProfit").textContent = money(products.reduce((s,p) => s + (p.sell-p.buy)*p.stock, 0));
-
-  const container = $("products");
-  container.replaceChildren();
-
-  if (!products.length) {
-    const empty = document.createElement("p");
-    empty.className = "empty";
-    empty.textContent = "هنوز محصولی ثبت نشده است.";
-    container.append(empty);
-    return;
-  }
-
-  products.forEach(p => {
-    const card = document.createElement("article");
-    card.className = "product";
-
-    const title = document.createElement("h3");
-    title.textContent = p.name;
-    card.append(title);
-
-    const details = document.createElement("div");
-    details.className = "details";
-    details.textContent =
-      "قیمت خرید: " + money(p.buy) +
-      "\nقیمت فروش: " + money(p.sell) +
-      "\nموجودی: " + digits(p.stock) +
-      "\nسود احتمالی هر عدد: " + money(p.sell-p.buy);
-    details.style.whiteSpace = "pre-line";
-    card.append(details);
-
-    if (p.image) {
-      const img = document.createElement("img");
-      img.src = p.image;
-      img.alt = p.name;
-      img.loading = "lazy";
-      img.style.cssText = "max-width:120px;max-height:120px;object-fit:contain;margin-top:10px";
-      img.onerror = () => img.remove();
-      card.append(img);
-    }
-
-    const actions = document.createElement("div");
-    actions.className = "actions";
-
-    const edit = document.createElement("button");
-    edit.className = "secondary";
-    edit.textContent = "ویرایش";
-    edit.onclick = () => startEdit(p.id);
-
-    const remove = document.createElement("button");
-    remove.className = "danger";
-    remove.textContent = "حذف";
-    remove.onclick = () => {
-      if (confirm("این محصول حذف شود؟")) {
-        products = products.filter(x => x.id !== p.id);
-        persist();
-      }
-    };
-
-    actions.append(edit, remove);
-    card.append(actions);
-    container.append(card);
-  });
+function escapeHTML(value) {
+  return String(value ?? "").replace(/[&<>"']/g, c => ({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+  })[c]);
 }
-
+function money(value) {
+  return Number(value || 0).toLocaleString("fa-IR");
+}
+function setBusy(value) {
+  busy = value;
+  document.querySelectorAll("button").forEach(b => b.disabled = value);
+}
 function resetForm() {
-  $("productForm").reset();
-  $("editId").value = "";
-  $("formTitle").textContent = "➕ افزودن محصول جدید";
-  $("saveButton").textContent = "ثبت محصول";
-  $("cancelEdit").hidden = true;
+  productForm.reset();
+  editingId = null;
+  document.getElementById("formTitle").textContent = "افزودن محصول جدید";
+  document.getElementById("saveButton").textContent = "ذخیره محصول";
+  document.getElementById("cancelButton").hidden = true;
 }
-
-function startEdit(id) {
-  const p = products.find(x => x.id === id);
-  if (!p) return;
-  $("editId").value = p.id;
-  $("name").value = p.name;
-  $("buy").value = p.buy;
-  $("sell").value = p.sell;
-  $("stock").value = p.stock;
-  $("image").value = p.image || "";
-  $("formTitle").textContent = "✏️ ویرایش محصول";
-  $("saveButton").textContent = "ذخیره تغییرات";
-  $("cancelEdit").hidden = false;
-  window.scrollTo({top:0,behavior:"smooth"});
+function updateStats() {
+  document.getElementById("totalCount").textContent = products.length.toLocaleString("fa-IR");
+  document.getElementById("totalStock").textContent =
+    products.reduce((sum,p)=>sum+Number(p.stock||0),0).toLocaleString("fa-IR");
+  document.getElementById("totalValue").textContent =
+    money(products.reduce((sum,p)=>sum+Number(p.purchase_price||0)*Number(p.stock||0),0));
 }
+function renderProducts() {
+  const query = document.getElementById("search").value.trim().toLowerCase();
+  const filtered = products.filter(p => p.name.toLowerCase().includes(query));
+  productsList.replaceChildren();
 
-$("productForm").addEventListener("submit", event => {
-  event.preventDefault();
-
-  const name = $("name").value.trim();
-  const buy = Number($("buy").value);
-  const sell = Number($("sell").value);
-  const stock = Number($("stock").value);
-  const image = $("image").value.trim();
-
-  if (!name || ![buy,sell,stock].every(Number.isFinite) ||
-      buy < 0 || sell < 0 || stock < 0 || !Number.isInteger(stock)) {
-    alert("لطفاً اطلاعات محصول را درست وارد کن.");
+  if (!filtered.length) {
+    productsList.textContent = query ? "محصولی با این نام پیدا نشد." : "هنوز محصولی ثبت نشده است.";
+    updateStats();
     return;
   }
 
-  const id = $("editId").value;
-  const product = {id: id || String(Date.now()), name, buy, sell, stock, image};
+  filtered.forEach(p => {
+    const div = document.createElement("div");
+    div.className = "product";
+    const safeImage = p.image_url &&
+      /^https?:\/\//i.test(p.image_url) ? p.image_url : "";
+    div.innerHTML = `
+      ${safeImage ? `<img src="${escapeHTML(safeImage)}" alt="" loading="lazy" referrerpolicy="no-referrer">` : ""}
+      <h3>${escapeHTML(p.name)}</h3>
+      <p class="small">قیمت خرید: ${money(p.purchase_price)} تومان</p>
+      <p class="small">قیمت فروش: ${money(p.sale_price)} تومان</p>
+      <p class="small">موجودی: ${money(p.stock)}</p>
+      <div class="actions">
+        <button type="button" class="secondary edit">ویرایش</button>
+        <button type="button" class="danger delete">حذف</button>
+      </div>`;
+    div.querySelector(".edit").addEventListener("click", () => editProduct(p));
+    div.querySelector(".delete").addEventListener("click", () => deleteProduct(p));
+    productsList.appendChild(div);
+  });
+  updateStats();
+}
+async function loadProducts() {
+  hideMessage();
+  const {data,error} = await db.from("products")
+    .select("*").order("created_at",{ascending:false});
+  if(error) {
+    showMessage("بارگذاری محصولات ناموفق بود: " + error.message, true);
+    return;
+  }
+  products = data || [];
+  renderProducts();
+}
+function editProduct(p) {
+  editingId = p.id;
+  document.getElementById("productName").value = p.name;
+  document.getElementById("purchasePrice").value = p.purchase_price;
+  document.getElementById("salePrice").value = p.sale_price;
+  document.getElementById("stock").value = p.stock;
+  document.getElementById("imageUrl").value = p.image_url || "";
+  document.getElementById("formTitle").textContent = "ویرایش محصول";
+  document.getElementById("saveButton").textContent = "ذخیره تغییرات";
+  document.getElementById("cancelButton").hidden = false;
+  productForm.scrollIntoView({behavior:"smooth",block:"start"});
+}
+async function deleteProduct(p) {
+  if(!confirm("محصول «" + p.name + "» حذف شود؟")) return;
+  setBusy(true);
+  const {error} = await db.from("products").delete().eq("id",p.id);
+  setBusy(false);
+  if(error) {
+    showMessage("حذف ناموفق بود: " + error.message,true);
+    return;
+  }
+  showMessage("محصول حذف شد.");
+  await loadProducts();
+}
+document.getElementById("loginForm").addEventListener("submit", async e => {
+  e.preventDefault();
+  if(busy) return;
+  hideMessage();
+  setBusy(true);
+  const {error} = await db.auth.signInWithPassword({
+    email:document.getElementById("email").value.trim(),
+    password:document.getElementById("password").value
+  });
+  setBusy(false);
+  if(error) showMessage("ورود انجام نشد. ایمیل و رمز را بررسی کن. ("+error.message+")",true);
+});
+document.getElementById("logoutButton").addEventListener("click", async () => {
+  if(busy) return;
+  setBusy(true);
+  const {error} = await db.auth.signOut();
+  setBusy(false);
+  if(error) showMessage("خروج ناموفق بود: "+error.message,true);
+});
+document.getElementById("cancelButton").addEventListener("click",resetForm);
+document.getElementById("search").addEventListener("input",renderProducts);
 
-  if (id) {
-    products = products.map(p => p.id === id ? product : p);
-  } else {
-    products.push(product);
+productForm.addEventListener("submit", async e => {
+  e.preventDefault();
+  if(busy) return;
+  hideMessage();
+
+  const name = document.getElementById("productName").value.trim();
+  const purchase = Number(document.getElementById("purchasePrice").value);
+  const sale = Number(document.getElementById("salePrice").value);
+  const stockValue = Number(document.getElementById("stock").value);
+  const image = document.getElementById("imageUrl").value.trim();
+
+  if(!name || purchase<0 || sale<0 || !Number.isFinite(purchase) ||
+     !Number.isFinite(sale) || !Number.isInteger(stockValue) || stockValue<0) {
+    showMessage("لطفاً اطلاعات محصول و قیمت‌ها و موجودی را درست وارد کن.",true);
+    return;
+  }
+  if(image && !/^https?:\/\//i.test(image)) {
+    showMessage("لینک عکس باید با https:// یا http:// شروع شود.",true);
+    return;
   }
 
-  persist();
+  const item = {
+    name,
+    purchase_price:purchase,
+    sale_price:sale,
+    stock:stockValue,
+    image_url:image || null
+  };
+
+  setBusy(true);
+  const result = editingId
+    ? await db.from("products").update(item).eq("id",editingId)
+    : await db.from("products").insert(item);
+  setBusy(false);
+
+  if(result.error) {
+    showMessage("ذخیره انجام نشد: "+result.error.message,true);
+    return;
+  }
   resetForm();
+  showMessage("محصول با موفقیت ذخیره شد.");
+  await loadProducts();
 });
 
-$("cancelEdit").addEventListener("click", resetForm);
-
-$("exportButton").addEventListener("click", () => {
-  const blob = new Blob([JSON.stringify(products,null,2)], {type:"application/json"});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = "pakiza-products-backup.json";
-  a.click();
-  URL.revokeObjectURL(url);
-});
-
-render();
+async function init() {
+  if(SUPABASE_URL.includes("PASTE_") ||
+     SUPABASE_PUBLISHABLE_KEY.includes("PASTE_")) {
+    showMessage("هنوز آدرس پروژه و Publishable key را در کد قرار نداده‌ای.",true);
+    document.getElementById("loginButton").disabled = true;
+    return;
+  }
+  try {
+    db = window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY);
+    const {data,error} = await db.auth.getSession();
+    if(error) throw error;
+    showApp(data.session);
+    db.auth.onAuthStateChange((_event,session) => {
+      showApp(session);
+    });
+  } catch(err) {
+    showMessage("اتصال برقرار نشد. آدرس پروژه و کلید را بررسی کن.",true);
+  }
+}
+function showApp(session) {
+  loginCard.hidden = !!session;
+  dashboard.hidden = !session;
+  if(session) loadProducts();
+  else {
+    products = [];
+    productsList.replaceChildren();
+    updateStats();
+    resetForm();
+  }
+}
+init();
 </script>
 </body>
 </html>
