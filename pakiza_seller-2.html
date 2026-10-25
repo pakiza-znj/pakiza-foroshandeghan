@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>پنل فروشنده | پاکیزا</title>
+<style>
+:root{--bg:#f7f5f1;--card:#fff;--ink:#24302a;--muted:#6d786f;--green:#245c45;--green2:#e3efe7;--line:#e4e8e3;--pink:#f7e5e9;--gold:#c49b56;--danger:#a63b3b}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:Tahoma,Arial,sans-serif}
+header{background:linear-gradient(135deg,#214f3d,#397557);color:#fff;padding:24px 18px 28px;border-radius:0 0 24px 24px}
+.wrap{max-width:1100px;margin:auto;padding:0 14px}header .top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.brand{font-size:24px;font-weight:800}.sub{font-size:13px;opacity:.85;margin-top:7px}
+.pill{font-size:12px;background:#ffffff22;border:1px solid #ffffff45;padding:8px 11px;border-radius:999px}
+nav{display:flex;gap:8px;flex-wrap:wrap;margin-top:20px}
+nav button{border:1px solid #ffffff55;background:#ffffff13;color:#fff;border-radius:12px;padding:10px 13px;font:inherit;cursor:pointer}
+nav button.active{background:#fff;color:var(--green);font-weight:bold}
+main{padding:20px 0 40px}.notice{background:#fff7df;border:1px solid #ead8a1;color:#68511e;border-radius:14px;padding:12px 14px;line-height:1.9;font-size:13px;margin-bottom:16px}
+.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:16px}
+.stat,.panel{background:var(--card);border:1px solid var(--line);border-radius:17px;padding:16px;box-shadow:0 5px 18px #1f3c2a08}
+.stat .label{color:var(--muted);font-size:13px}.stat strong{display:block;font-size:24px;margin-top:9px}.stat small{display:block;color:var(--muted);margin-top:5px}
+.panel{margin-bottom:15px}.panel h2{font-size:17px;margin:0 0 14px}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.row>*{flex:1}
+input,textarea,select{width:100%;border:1px solid #dce2dc;background:#fff;border-radius:10px;padding:11px;font:inherit;color:var(--ink);min-width:0}
+textarea{min-height:76px;resize:vertical}
+label{display:block;font-size:12px;color:var(--muted);margin:0 0 6px}
+.field{margin-bottom:12px}.btn{border:0;background:var(--green);color:white;border-radius:10px;padding:11px 15px;font:inherit;cursor:pointer}
+.btn.light{background:var(--green2);color:var(--green)}.btn.danger{background:#fae8e8;color:var(--danger)}.btn.gold{background:#f4ead7;color:#715522}
+.tablewrap{overflow:auto}table{width:100%;border-collapse:collapse;min-width:620px}th,td{text-align:right;padding:12px 9px;border-bottom:1px solid var(--line);font-size:13px}th{color:var(--muted);font-weight:600;background:#fbfcfa}td .btn{padding:7px 9px;font-size:12px}
+.empty{text-align:center;color:var(--muted);padding:24px}
+.section{display:none}.section.active{display:block}
+.chip{display:inline-block;background:var(--green2);color:var(--green);padding:5px 8px;border-radius:999px;font-size:12px}
+.actions{display:flex;gap:6px;flex-wrap:wrap}.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+footer{text-align:center;color:var(--muted);font-size:12px;padding:10px 0 24px}
+@media(max-width:760px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.two{grid-template-columns:1fr}.brand{font-size:21px}.stat strong{font-size:21px}}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+  <div class="top"><div><div class="brand">پاکیزا <span style="color:#f0d9a8">| پنل فروشنده</span></div><div class="sub">مدیریت محصولات، موجودی، فروش و مشتری‌ها</div></div><span class="pill">نسخه آزمایشی</span></div>
+  <nav>
+    <button class="active" data-tab="dashboard">داشبورد</button>
+    <button data-tab="products">محصولات</button>
+    <button data-tab="sales">فاکتور فروش</button>
+    <button data-tab="customers">مشتری‌ها</button>
+  </nav>
+</div></header>
+<main class="wrap">
+  <div class="notice"><b>نکته مهم:</b> این نسخه فعلاً اطلاعات را فقط در همین مرورگر ذخیره می‌کند. هنوز به سایت مشتری‌ها یا پایگاه داده مشترک وصل نیست؛ برای استفاده واقعی و همگام‌سازی بین دستگاه‌ها باید بعداً اتصال امن اضافه شود. اطلاعات حساس مشتری‌ها را فعلاً وارد نکن.</div>
+  <section id="dashboard" class="section active">
+    <div class="grid">
+      <div class="stat"><span class="label">تعداد محصولات</span><strong id="statProducts">۰</strong><small>محصول ثبت‌شده</small></div>
+      <div class="stat"><span class="label">ارزش موجودی بر اساس قیمت خرید</span><strong id="statStock">۰</strong><small>تومان</small></div>
+      <div class="stat"><span class="label">فاکتورهای ثبت‌شده</span><strong id="statSales">۰</strong><small>فروش ثبت‌شده</small></div>
+      <div class="stat"><span class="label">سود ناخالص ثبت‌شده</span><strong id="statProfit">۰</strong><small>تومان، پیش از هزینه‌ها</small></div>
+    </div>
+    <div class="panel"><h2>شروع سریع</h2><p style="line-height:2;color:var(--muted);margin:0">اول محصول‌ها را اضافه کن؛ قیمت خرید و فروش و موجودی را وارد کن. بعد می‌توانی فاکتور فروش بسازی و موجودی را کاهش بدهی.</p><div class="row" style="margin-top:14px"><button class="btn" onclick="switchTab('products')">＋ افزودن محصول</button><button class="btn light" onclick="switchTab('sales')">＋ ثبت فاکتور</button></div></div>
+  </section>
+  <section id="products" class="section">
+    <div class="panel"><h2 id="productFormTitle">افزودن محصول</h2><form id="productForm">
+      <input type="hidden" id="productId">
+      <div class="row">
+        <div class="field"><label for="pName">نام محصول *</label><input id="pName" required placeholder="مثلاً اسپری چندمنظوره"></div>
+        <div class="field"><label for="pCode">کد محصول (اختیاری)</label><input id="pCode" placeholder="مثلاً P-001"></div>
+      </div>
+      <div class="row">
+        <div class="field"><label for="pBuy">قیمت خرید (تومان) *</label><input id="pBuy" type="number" min="0" required placeholder="۰"></div>
+        <div class="field"><label for="pSell">قیمت فروش (تومان) *</label><input id="pSell" type="number" min="0" required placeholder="۰"></div>
+        <div class="field"><label for="pQty">موجودی اولیه *</label><input id="pQty" type="number" min="0" step="1" required value="0"></div>
+      </div>
+      <div class="field"><label for="pNote">توضیحات (اختیاری)</label><textarea id="pNote" placeholder="توضیحات کوتاه محصول"></textarea></div>
+      <div class="row" style="justify-content:flex-start"><button class="btn" type="submit">ذخیره محصول</button><button class="btn light" type="button" onclick="resetProductForm()">لغو / پاک‌کردن فرم</button></div>
+    </form></div>
+    <div class="panel"><h2>فهرست محصولات</h2><div class="field"><input id="productSearch" placeholder="جست‌وجو در نام یا کد محصول..." oninput="renderProducts()"></div><div class="tablewrap"><table><thead><tr><th>محصول</th><th>قیمت خرید</th><th>قیمت فروش</th><th>سود هر عدد</th><th>موجودی</th><th>عملیات</th></tr></thead><tbody id="productsBody"></tbody></table></div></div>
+  </section>
+  <section id="sales" class="section">
+    <div class="panel"><h2>ثبت فاکتور فروش</h2><form id="saleForm">
+      <div class="row">
+        <div class="field"><label for="saleCustomer">نام مشتری (اختیاری)</label><input id="saleCustomer" placeholder="نام یا عنوان مشتری"></div>
+        <div class="field"><label for="saleProduct">محصول *</label><select id="saleProduct" required></select></div>
+        <div class="field"><label for="saleQty">تعداد *</label><input id="saleQty" type="number" min="1" step="1" required value="1"></div>
+      </div>
+      <div class="field"><label for="saleNote">یادداشت فاکتور (اختیاری)</label><input id="saleNote" placeholder="مثلاً تحویل حضوری"></div>
+      <button class="btn" type="submit">ثبت فاکتور و کسر از موجودی</button>
+    </form></div>
+    <div class="panel"><h2>فاکتورهای ثبت‌شده</h2><div class="tablewrap"><table><thead><tr><th>شماره</th><th>تاریخ</th><th>مشتری</th><th>محصول</th><th>تعداد</th><th>مبلغ کل</th><th>سود ناخالص</th></tr></thead><tbody id="salesBody"></tbody></table></div></div>
+  </section>
+  <section id="customers" class="section">
+    <div class="panel"><h2>مشتری‌های ثبت‌شده از فاکتورها</h2><p style="color:var(--muted);line-height:1.9;font-size:13px">نام مشتری‌هایی که هنگام ثبت فاکتور وارد می‌کنی، اینجا به‌صورت خلاصه نمایش داده می‌شوند. فعلاً شماره تماس یا اطلاعات خصوصی وارد نکن.</p><div class="tablewrap"><table><thead><tr><th>نام مشتری</th><th>تعداد فاکتور</th><th>مجموع خرید ثبت‌شده</th></tr></thead><tbody id="customersBody"></tbody></table></div></div>
+  </section>
+  <div class="panel"><div class="row"><div><b>پشتیبان‌گیری آزمایشی</b><div style="font-size:12px;color:var(--muted);margin-top:5px">برای ذخیره یک کپی از داده‌های همین مرورگر</div></div><button class="btn gold" onclick="exportData()">دریافت نسخه پشتیبان JSON</button><button class="btn danger" onclick="clearData()">پاک‌کردن همه اطلاعات این مرورگر</button></div></div>
+</main>
+<footer class="wrap">پاکیزا · پنل فروشنده آزمایشی</footer>
+<script>
+const KEY='pakiza_seller_demo_v1';
+let db=load();
+function load(){try{return JSON.parse(localStorage.getItem(KEY))||{products:[],sales:[]}}catch(e){return {products:[],sales:[]}}}
+function save(){localStorage.setItem(KEY,JSON.stringify(db));renderAll()}
+function money(n){return (Number(n)||0).toLocaleString('fa-IR')}
+function id(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6)}
+function switchTab(tab){document.querySelectorAll('.section').forEach(s=>s.classList.toggle('active',s.id===tab));document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));window.scrollTo({top:0,behavior:'smooth'})}
+document.querySelectorAll('nav button').forEach(b=>b.addEventListener('click',()=>switchTab(b.dataset.tab)));
+function resetProductForm(){document.getElementById('productForm').reset();document.getElementById('productId').value='';document.getElementById('productFormTitle').textContent='افزودن محصول';document.getElementById('pQty').value='0'}
+document.getElementById('productForm').addEventListener('submit',e=>{e.preventDefault();const pid=document.getElementById('productId').value;const item={id:pid||id(),name:document.getElementById('pName').value.trim(),code:document.getElementById('pCode').value.trim(),buy:Number(document.getElementById('pBuy').value),sell:Number(document.getElementById('pSell').value),qty:Math.max(0,Number(document.getElementById('pQty').value)),note:document.getElementById('pNote').value.trim()};if(item.sell<0||item.buy<0){alert('قیمت نمی‌تواند منفی باشد.');return}if(pid){const old=db.products.find(p=>p.id===pid);if(old){item.qty=Number(document.getElementById('pQty').value);}}db.products=pid?db.products.map(p=>p.id===pid?item:p):[item,...db.products];save();resetProductForm();});
+function editProduct(pid){const p=db.products.find(x=>x.id===pid);if(!p)return;document.getElementById('productId').value=p.id;document.getElementById('pName').value=p.name;document.getElementById('pCode').value=p.code||'';document.getElementById('pBuy').value=p.buy;document.getElementById('pSell').value=p.sell;document.getElementById('pQty').value=p.qty;document.getElementById('pNote').value=p.note||'';document.getElementById('productFormTitle').textContent='ویرایش محصول';switchTab('products');window.scrollTo({top:0,behavior:'smooth'})}
+function deleteProduct(pid){if(!confirm('این محصول حذف شود؟'))return;if(db.sales.some(s=>s.productId===pid)){alert('این محصول در فاکتور ثبت‌شده وجود دارد؛ برای حفظ سوابق حذف نمی‌شود.');return}db.products=db.products.filter(p=>p.id!==pid);save()}
+function renderProducts(){const q=(document.getElementById('productSearch')?.value||'').trim().toLowerCase();const rows=db.products.filter(p=>(p.name+' '+(p.code||'')).toLowerCase().includes(q));document.getElementById('productsBody').innerHTML=rows.length?rows.map(p=>`<tr><td><b>${esc(p.name)}</b>${p.code?'<br><small>'+esc(p.code)+'</small>':''}</td><td>${money(p.buy)}</td><td>${money(p.sell)}</td><td>${money(p.sell-p.buy)}</td><td><span class="chip">${money(p.qty)}</span></td><td><div class="actions"><button class="btn light" onclick="editProduct('${p.id}')">ویرایش</button><button class="btn danger" onclick="deleteProduct('${p.id}')">حذف</button></div></td></tr>`).join(''):'<tr><td colspan="6" class="empty">هنوز محصولی ثبت نشده.</td></tr>';const sel=document.getElementById('saleProduct');const old=sel.value;sel.innerHTML='<option value="">انتخاب محصول</option>'+db.products.map(p=>`<option value="${p.id}">${esc(p.name)} — موجودی: ${money(p.qty)}</option>`).join('');if(db.products.some(p=>p.id===old))sel.value=old}
+document.getElementById('saleForm').addEventListener('submit',e=>{e.preventDefault();const p=db.products.find(x=>x.id===document.getElementById('saleProduct').value);const qty=Number(document.getElementById('saleQty').value);if(!p){alert('اول محصول را انتخاب کن.');return}if(!Number.isInteger(qty)||qty<1){alert('تعداد باید عدد صحیح مثبت باشد.');return}if(qty>p.qty){alert('موجودی کافی نیست.');return}const s={id:id(),number:db.sales.length+1,date:new Date().toLocaleDateString('fa-IR'),customer:document.getElementById('saleCustomer').value.trim()||'—',productId:p.id,productName:p.name,qty,unitSell:p.sell,unitBuy:p.buy,total:p.sell*qty,profit:(p.sell-p.buy)*qty,note:document.getElementById('saleNote').value.trim()};p.qty-=qty;db.sales.unshift(s);save();e.target.reset();document.getElementById('saleQty').value='1';alert('فاکتور در همین مرورگر ثبت شد.')});
+function renderSales(){document.getElementById('salesBody').innerHTML=db.sales.length?db.sales.map(s=>`<tr><td>#${money(s.number)}</td><td>${esc(s.date)}</td><td>${esc(s.customer)}</td><td>${esc(s.productName)}</td><td>${money(s.qty)}</td><td>${money(s.total)} تومان</td><td>${money(s.profit)} تومان</td></tr>`).join(''):'<tr><td colspan="7" class="empty">هنوز فاکتوری ثبت نشده.</td></tr>'}
+function renderCustomers(){const m={};db.sales.forEach(s=>{if(s.customer&&s.customer!=='—'){m[s.customer]??={count:0,total:0};m[s.customer].count++;m[s.customer].total+=s.total}});const rows=Object.entries(m);document.getElementById('customersBody').innerHTML=rows.length?rows.map(([n,v])=>`<tr><td>${esc(n)}</td><td>${money(v.count)}</td><td>${money(v.total)} تومان</td></tr>`).join(''):'<tr><td colspan="3" class="empty">هنوز نام مشتری‌ای در فاکتورها ثبت نشده.</td></tr>'}
+function renderStats(){document.getElementById('statProducts').textContent=money(db.products.length);document.getElementById('statStock').textContent=money(db.products.reduce((a,p)=>a+p.buy*p.qty,0));document.getElementById('statSales').textContent=money(db.sales.length);document.getElementById('statProfit').textContent=money(db.sales.reduce((a,s)=>a+s.profit,0))}
+function renderAll(){renderStats();renderProducts();renderSales();renderCustomers()}
+function exportData(){const blob=new Blob([JSON.stringify(db,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='pakiza-backup.json';a.click();URL.revokeObjectURL(a.href)}
+function clearData(){if(!confirm('همه محصولات و فاکتورهای ذخیره‌شده در همین مرورگر پاک شوند؟'))return;db={products:[],sales:[]};save()}
+function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+renderAll();
+</script>
+</body>
+</html>
